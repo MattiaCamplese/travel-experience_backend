@@ -6,6 +6,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
@@ -46,14 +47,19 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $data = $request->validate([
-            'firstName' => ['sometimes', 'string', 'max:255'],
-            'lastName'  => ['sometimes', 'string', 'max:255'],
-            'password'  => ['sometimes', 'confirmed', 'min:8'],
+            'firstName'            => ['sometimes', 'string', 'max:255'],
+            'lastName'             => ['sometimes', 'string', 'max:255'],
+            'password'             => ['sometimes', 'string', 'min:8'],
+            'passwordConfirmation' => ['required_with:password', 'string'],
         ]);
+
+        if (isset($data['password']) && $data['password'] !== $data['passwordConfirmation']) {
+            return response()->json(['message' => 'Le password non coincidono'], 422);
+        }
 
         if (isset($data['firstName'])) $user->first_name = $data['firstName'];
         if (isset($data['lastName']))  $user->last_name  = $data['lastName'];
-        if (isset($data['password']))  $user->password   = $data['password'];
+        if (isset($data['password']))  $user->password   = Hash::make($data['password']);
 
         $user->save();
 
