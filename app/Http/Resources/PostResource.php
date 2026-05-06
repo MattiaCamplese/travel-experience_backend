@@ -22,7 +22,7 @@ class PostResource extends JsonResource
             'title' => $this->title,
             'location' => $this->location,
             'country' => $this->country,
-            'img' => $this->img ? asset(Storage::url($this->img)) : null,
+            'img' => $this->img ? Storage::disk('tigris')->url($this->img) : null,
             'description' => $this->description,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
@@ -31,7 +31,7 @@ class PostResource extends JsonResource
                 'firstName' => $this->author->first_name,
                 'lastName' => $this->author->last_name,
                 'email' => $this->author->email,
-                'avatarUrl' => $this->author->avatar ? asset(Storage::url($this->author->avatar)) : null,
+                'avatarUrl' => $this->author->avatar ? Storage::disk('tigris')->url($this->author->avatar) : null,
             ],
             'comments' => $this->comments->map(function (Comment $comment) {
                 return [

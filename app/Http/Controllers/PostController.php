@@ -28,7 +28,7 @@ class PostController extends Controller
         $imgPath = null;
         try {
             if ($request->hasFile('img')) {
-                $imgPath = $request->file('img')->store('posts', 'public');
+                $imgPath = $request->file('img')->store('posts', 'tigris');
             }
 
             $data = $request->validated();
@@ -41,9 +41,9 @@ class PostController extends Controller
                 'message' => 'Post Created Successfully.',
                 'post' => new PostResource($post->fresh())
             ]);
-        } catch (\Throwable $th) {
+        } catch (\Throwable) {
             if ($imgPath) {
-                Storage::disk('public')->delete($imgPath);
+                Storage::disk('tigris')->delete($imgPath);
             }
         }
     }
@@ -70,7 +70,7 @@ class PostController extends Controller
             $data = $request->validated();
 
             if ($request->hasFile('img')) {
-                $newImagePath = $request->file('img')->store('posts', 'public');
+                $newImagePath = $request->file('img')->store('posts', 'tigris');
             }
 
             if ($newImagePath) {
@@ -80,14 +80,14 @@ class PostController extends Controller
             $post->update($data);
 
             if ($request->hasFile('img') && $oldImagePath && $newImagePath !== $oldImagePath) {
-                Storage::disk('public')->delete($oldImagePath);
+                Storage::disk('tigris')->delete($oldImagePath);
             }
 
             return new PostResource($post);
 
         } catch (\Throwable $th) {
             if ($request->hasFile('img') && $newImagePath && $newImagePath !== $oldImagePath) {
-                Storage::disk('public')->delete($newImagePath);
+                Storage::disk('tigris')->delete($newImagePath);
             }
             throw $th;
         }
@@ -103,7 +103,7 @@ class PostController extends Controller
         $post->delete();
 
         if ($imagePath) {
-            Storage::disk('public')->delete($imagePath);
+            Storage::disk('tigris')->delete($imagePath);
         }
         
         return response()->json([

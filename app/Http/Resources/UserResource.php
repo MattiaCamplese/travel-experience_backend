@@ -21,7 +21,7 @@ class UserResource extends JsonResource
             "firstName" => $this->first_name,
             "lastName" => $this->last_name,
             "email" => $this->email,
-            "avatarUrl" => $this->avatar ? asset(Storage::url($this->avatar)) : null,
+            "avatarUrl" => $this->avatar ? Storage::disk('tigris')->url($this->avatar) : null,
             "createdAt" => $this->created_at,
             "updatedAt" => $this->updated_at,
             "posts" => PostResource::collection($this->whenLoaded('posts')),

@@ -60,6 +60,20 @@ return [
             'report' => false,
         ],
 
+        'tigris' => [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => 'auto',
+            'bucket' => env('AWS_BUCKET'),
+            'url' => env('AWS_URL'),
+            'endpoint' => env('AWS_ENDPOINT', 'https://fly.storage.tigris.dev'),
+            'use_path_style_endpoint' => false,
+            'visibility' => 'public',
+            'throw' => true,
+            'report' => false,
+        ],
+
     ],
 
     /*

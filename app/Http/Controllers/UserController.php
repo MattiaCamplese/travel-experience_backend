@@ -48,15 +48,15 @@ class UserController extends Controller
         $request->validate(['avatar' => 'required|image|max:2048']);
 
         if ($user->avatar) {
-            Storage::disk('public')->delete($user->avatar);
+            Storage::disk('tigris')->delete($user->avatar);
         }
 
-        $path = $request->file('avatar')->store('avatars', 'public');
+        $path = $request->file('avatar')->store('avatars', 'tigris');
         $user->update(['avatar' => $path]);
 
         return response()->json([
             'success' => true,
-            'data' => ['avatarUrl' => asset(Storage::url($path))],
+            'data' => ['avatarUrl' => Storage::disk('tigris')->url($path)],
         ]);
     }
 
