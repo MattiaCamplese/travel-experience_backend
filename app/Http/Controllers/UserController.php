@@ -71,9 +71,11 @@ class UserController extends Controller
         $path = $request->file('avatar')->store('avatars', 'tigris');
         $user->update(['avatar' => $path]);
 
+        $avatarUrl = 'https://' . env('AWS_BUCKET') . '.fly.storage.tigris.dev/' . $path;
+
         return response()->json([
             'success' => true,
-            'data' => ['avatarUrl' => Storage::disk('tigris')->url($path)],
+            'data' => ['avatarUrl' => $avatarUrl],
         ]);
     }
 
