@@ -41,10 +41,11 @@ class PostController extends Controller
                 'message' => 'Post Created Successfully.',
                 'post' => new PostResource($post->fresh())
             ]);
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
             if ($imgPath) {
                 Storage::disk('tigris')->delete($imgPath);
             }
+            throw $e;
         }
     }
 

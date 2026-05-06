@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
@@ -14,6 +15,13 @@ class UserResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+    private function storageUrl(string $path): string
+    {
+        /** @var FilesystemAdapter $disk */
+        $disk = Storage::disk('tigris');
+        return $disk->url($path);
+    }
+
     public function toArray(Request $request): array
     {
         return [
@@ -21,7 +29,7 @@ class UserResource extends JsonResource
             "firstName" => $this->first_name,
             "lastName" => $this->last_name,
             "email" => $this->email,
-            "avatarUrl" => $this->avatar ? Storage::disk('tigris')->url($this->avatar) : null,
+            "avatarUrl" => $this->avatar ? $this->storageUrl($this->avatar) : null,
             "createdAt" => $this->created_at,
             "updatedAt" => $this->updated_at,
             "posts" => PostResource::collection($this->whenLoaded('posts')),

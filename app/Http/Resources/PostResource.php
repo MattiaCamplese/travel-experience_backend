@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 
 use App\Models\Comment;
 use Illuminate\Http\Request;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 
@@ -15,6 +16,13 @@ class PostResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+    private function storageUrl(string $path): string
+    {
+        /** @var FilesystemAdapter $disk */
+        $disk = Storage::disk('tigris');
+        return $disk->url($path);
+    }
+
     public function toArray(Request $request): array
     {
         return [
@@ -22,7 +30,7 @@ class PostResource extends JsonResource
             'title' => $this->title,
             'location' => $this->location,
             'country' => $this->country,
-            'img' => $this->img ? Storage::disk('tigris')->url($this->img) : null,
+            'img' => $this->img ? $this->storageUrl($this->img) : null,
             'description' => $this->description,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
@@ -31,7 +39,7 @@ class PostResource extends JsonResource
                 'firstName' => $this->author->first_name,
                 'lastName' => $this->author->last_name,
                 'email' => $this->author->email,
-                'avatarUrl' => $this->author->avatar ? Storage::disk('tigris')->url($this->author->avatar) : null,
+                'avatarUrl' => $this->author->avatar ? $this->storageUrl($this->author->avatar) : null,
             ],
             'comments' => $this->comments->map(function (Comment $comment) {
                 return [
