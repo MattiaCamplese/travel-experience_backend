@@ -43,6 +43,23 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
+    public function update(Request $request, User $user)
+    {
+        $data = $request->validate([
+            'firstName' => ['sometimes', 'string', 'max:255'],
+            'lastName'  => ['sometimes', 'string', 'max:255'],
+            'password'  => ['sometimes', 'confirmed', 'min:8'],
+        ]);
+
+        if (isset($data['firstName'])) $user->first_name = $data['firstName'];
+        if (isset($data['lastName']))  $user->last_name  = $data['lastName'];
+        if (isset($data['password']))  $user->password   = $data['password'];
+
+        $user->save();
+
+        return new UserResource($user);
+    }
+
     public function updateAvatar(Request $request, User $user)
     {
         $request->validate(['avatar' => 'required|image|max:2048']);
