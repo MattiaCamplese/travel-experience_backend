@@ -45,8 +45,12 @@ class PostResource extends JsonResource
                 return [
                     "id"         => $comment->id,
                     "comment"    => $comment->comment,
+                    "userId"     => (string) $comment->user_id,
                     "firstName"  => $comment->author->first_name,
                     "lastName"   => $comment->author->last_name,
+                    "avatarUrl"  => $comment->author->avatar
+                                    ? $this->storageUrl($comment->author->avatar)
+                                    : null,
                     "likes"      => $comment->likes->count(),
                     "userLikeId" => $comment->likes->where('user_id', optional(auth('sanctum')->user())->id)->first()?->id ?? null,
                 ];

@@ -49,21 +49,27 @@ class UserController extends Controller
         $data = $request->validate([
             'firstName'            => ['sometimes', 'string', 'max:255'],
             'lastName'             => ['sometimes', 'string', 'max:255'],
+            'currentPassword'      => ['required_with:password', 'string'],
             'password'             => ['sometimes', 'string', 'min:8'],
-            'passwordConfirmation' => ['required_with:password', 'string'],
+            'passwordConfirmation' => ['required_with:password', 'same:password'],
         ]);
 
-        if (isset($data['password']) && $data['password'] !== $data['passwordConfirmation']) {
-            return response()->json(['message' => 'Le password non coincidono'], 422);
+        if (isset($data['password'])) {
+            if (!Hash::check($data['currentPassword'], $user->password)) {
+                return response()->json(['message' => 'Password attuale non corretta.'], 422);
+            }
+            $user->password = Hash::make($data['password']);
         }
 
         if (isset($data['firstName'])) $user->first_name = $data['firstName'];
         if (isset($data['lastName']))  $user->last_name  = $data['lastName'];
-        if (isset($data['password']))  $user->password   = Hash::make($data['password']);
 
         $user->save();
 
-        return new UserResource($user);
+        return response()->json([
+            'success' => true,
+            'data'    => new UserResource($user->fresh()),
+        ]);
     }
 
     public function updateAvatar(Request $request, User $user)
